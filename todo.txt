@@ -1,0 +1,6 @@
+User Seo details
+User device and net details (ip,lat,long )
+Set up background process.
+
+Check social media login
+COmplete login api.
