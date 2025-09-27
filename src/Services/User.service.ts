@@ -9,7 +9,7 @@ import bcrypt from 'bcrypt';
 import jwt, { SignOptions } from 'jsonwebtoken';
 import { config } from "../Config/config";
 import { KAFKA_TOPICS, LAYER, SOCIAL_PROVIDER } from "../Common/Constants/enums"
-import { generateOTP, setJSON, getJSON, comparePassword, hashPassword } from "../Utils/Auth_Methods";
+import { generateOTP, setJSON, comparePassword, hashPassword } from "../Utils/Auth_Methods";
 import runProducer from "../Config/Kafka/producer";
 
 
