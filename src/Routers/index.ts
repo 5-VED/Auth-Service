@@ -30,7 +30,7 @@ export class IndexRoute implements IRoutes {
 
     private initializeRoutes(): void {
         // API Documentation
-        this.router.get('/', (req, res) => {
+        this.router.get('/', (_, res) => {
             res.json({
                 message: 'API is running',
                 version: '1.0.0',

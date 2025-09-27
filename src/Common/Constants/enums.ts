@@ -52,5 +52,7 @@ export enum SOCIAL_PROVIDER {
 }
 
 export enum KAFKA_TOPICS {
-	OTP_SEND = 'notifications.email.otp', // for sending otp to user via email or sms
+	EMAIL_NOTIFICATION = 'notifications.email',
+	INAPP_NOTIFICATION = 'notifications.inapp',
+	PUSH_NOTIFICATION = 'notifications.push',
 }

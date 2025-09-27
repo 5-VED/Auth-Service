@@ -101,7 +101,7 @@ export default class UserService {
 			// Save OTP int Redis for 10 Minutes
 			await setJSON(`user_${user.id}`, otp, 3600);		
 			// Send OTP to Notification Service via email using kafka.
-			await runProducer(KAFKA_TOPICS.OTP_SEND, [user.email, otp]);
+			await runProducer(KAFKA_TOPICS?.EMAIL_NOTIFICATION + ".welcome_email", [user.email, otp]);
 
 			await transaction.commit();
 			return user;
