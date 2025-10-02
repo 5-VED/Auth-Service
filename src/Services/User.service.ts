@@ -22,7 +22,7 @@ interface TokenPayload {
 export default class UserService {
 
 	private static readonly JWT_SECRET_KEY = config.jwt.secret as string;
-	private static readonly JWT_EXPIRES_IN = '24h'; // Set to 24 hours
+	private static readonly JWT_EXPIRES_IN = '24h';
 
 
 	public static async create(payload: any): Promise<UserAttributes> {
