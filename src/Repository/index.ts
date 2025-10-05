@@ -3,3 +3,4 @@ export * from './Role.repository';
 export * from './Address.repositoty';
 export * from './Auth.repository';
 export * from './Address.repositoty';
+export * from './Notification.repository';

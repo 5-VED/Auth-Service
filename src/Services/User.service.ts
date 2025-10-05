@@ -2,7 +2,7 @@ import message from "../Common/Constants/Messages";
 import ApiError from "../Common/ErrorResponse";
 import logger from "../Config/Logger";
 import { UserAttributes, UserCreatinAttributes } from "../Models/User.model";
-import { RoleRepository, AddressRepository, AuthRepository } from "../Repository";
+import { RoleRepository, AddressRepository, AuthRepository, NotificationRepository } from "../Repository";
 import { UserRepository } from "../Repository/User.repository";
 import sequelize from "../Database/PostgresConnection";
 import bcrypt from 'bcrypt';
@@ -95,13 +95,24 @@ export default class UserService {
 				password: hashedPassword,
 			}, transaction);
 
-			// Generate OTP and Store in Redis
 			const otp: string = generateOTP();
-			
-			// Save OTP int Redis for 10 Minutes
-			await setJSON(`user_${user.id}`, otp, 3600);		
-			// Send OTP to Notification Service via email using kafka.
-			await runProducer(KAFKA_TOPICS?.EMAIL_NOTIFICATION + ".welcome_email", [user.email, otp]);
+
+			const notification = {
+				userId: user.id,
+				eventType: "welcome_email",
+				queueName: "emailNotifications",
+				payload: { email: user.email, otp },
+				channel: "email",
+				priority: 1,
+				status: "pending",
+				sentAt: new Date()
+			}
+
+			await Promise.all([
+				setJSON(`user_${user.id}`, otp, 3600),
+				runProducer(KAFKA_TOPICS?.EMAIL_NOTIFICATION + ".welcome_email", [notification]),
+				NotificationRepository.create(notification, transaction)
+			])
 
 			await transaction.commit();
 			return user;

@@ -1,7 +1,7 @@
 import { Sequelize } from 'sequelize-typescript'
 import { config } from '../Config/config';
 import logger from '../Config/Logger';
-import { RoleModel, UserModel, AddressModel, AuthModel } from '../Models';
+import { RoleModel, UserModel, AddressModel, AuthModel, NotificationModel } from '../Models';
 
 const sequelize = new Sequelize(
 	config.database.name as string,
@@ -13,7 +13,7 @@ const sequelize = new Sequelize(
 		port: config.database.port as number,
 		
 		logging: config.isDevelopment ? true : false,
-		models: [UserModel, RoleModel, AddressModel, AuthModel]
+		models: [UserModel, RoleModel, AddressModel, AuthModel, NotificationModel]
 	}
 );
 
