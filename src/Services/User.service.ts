@@ -8,9 +8,8 @@ import sequelize from "../Database/PostgresConnection";
 import bcrypt from 'bcrypt';
 import jwt, { SignOptions } from 'jsonwebtoken';
 import { config } from "../Config/config";
-import { KAFKA_TOPICS, LAYER, SOCIAL_PROVIDER } from "../Common/Constants/enums"
+import { LAYER, SOCIAL_PROVIDER } from "../Common/Constants/enums"
 import { generateOTP, setJSON, comparePassword, hashPassword } from "../Utils/Auth_Methods";
-import runProducer from "../Config/Kafka/producer";
 
 
 interface TokenPayload {
@@ -171,17 +170,6 @@ export default class UserService {
 				throw ApiError.validationError('Email or Mobile no required');
 			}
 
-			const otp = generateOTP()
-
-			// send otp on email (template) or sms and expire it in 1 hour.
-
-
-
-
-
-
-			//  store otp in redis database.
-			// await setJSON(`user_${user.id}`, user.id)
 			return {
 				user: user.id
 			}
