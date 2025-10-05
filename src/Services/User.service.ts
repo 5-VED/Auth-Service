@@ -34,7 +34,6 @@ export default class UserService {
 				throw ApiError.conflict(message.USER_ALREADY_EXISTS, { email: payload.email });
 			}
 
-			// Resolve role
 			let roleId: string = payload.role;
 			if (!roleId) {
 				const defaultRole = await RoleRepository.findById(roleId, transaction);
@@ -44,7 +43,6 @@ export default class UserService {
 				}
 				roleId = defaultRole.id;
 			} else {
-
 				let role = await RoleRepository.findById(roleId, transaction);
 
 				if (!role) {
@@ -75,7 +73,6 @@ export default class UserService {
 				}
 			}
 
-			// Create user (without password)
 			const user = await UserRepository.create({
 				firstName: payload.firstName,
 				lastName: payload.lastName,
@@ -94,25 +91,6 @@ export default class UserService {
 				providerId: payload.email,
 				password: hashedPassword,
 			}, transaction);
-
-			const otp: string = generateOTP();
-
-			const notification = {
-				userId: user.id,
-				eventType: "welcome_email",
-				queueName: "emailNotifications",
-				payload: { email: user.email, otp },
-				channel: "email",
-				priority: 1,
-				status: "pending",
-				sentAt: new Date()
-			}
-
-			await Promise.all([
-				setJSON(`user_${user.id}`, otp, 3600),
-				runProducer(KAFKA_TOPICS?.EMAIL_NOTIFICATION + ".welcome_email", [notification]),
-				NotificationRepository.create(notification, transaction)
-			])
 
 			await transaction.commit();
 			return user;

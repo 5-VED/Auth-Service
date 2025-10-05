@@ -1,9 +1,11 @@
-import { HTTP_CODES } from "../Common/Constants/enums";
+import runProducer from "../Config/Kafka/producer";
+import { HTTP_CODES, KAFKA_TOPICS } from "../Common/Constants/enums";
 import message from "../Common/Constants/Messages";
 import logger from "../Config/Logger";
 import UserService from "../Services/User.service";
-import { sendResponse } from "../Utils/Auth_Methods";
+import { generateOTP, sendResponse, setJSON } from "../Utils/Auth_Methods";
 import { NextFunction, Request, Response } from "express";
+import { NotificationRepository } from "../Repository";
 const Layer: string = "Controller Layer"
 
 
@@ -11,6 +13,28 @@ export default class UserController {
 	public static async signup(req: Request, res: Response, next: NextFunction): Promise<void> {
 		try {
 			const response = await UserService.create(req.body);
+
+			if(!response){
+				return sendResponse(res, response, message.USER_CREATED_SUCCESSFULLY, false, HTTP_CODES.INTERNAL_SERVER_ERROR)
+			}
+
+			const otp: string = generateOTP();
+			const notification = {
+				userId: response.id,
+				eventType: "welcome_email",
+				queueName: "emailNotifications",
+				payload: { email: response.email, otp },
+				channel: "email",
+				priority: 1,
+				status: "pending",
+				sentAt: new Date()
+			}
+
+			await Promise.all([
+				setJSON(`user_${response.id}`, otp, 3600),
+				runProducer(KAFKA_TOPICS?.EMAIL_NOTIFICATION + ".welcome_email", [notification]),
+				NotificationRepository.create(notification)
+			])
 
 			return sendResponse(res, response, message.USER_CREATED_SUCCESSFULLY, true, HTTP_CODES.OK)
 		} catch (error) {
