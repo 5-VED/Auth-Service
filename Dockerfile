@@ -16,7 +16,7 @@ COPY . .
 ENV ENV=development \
     PORT=3000 \
     MEMORY_USAGE_TIMEOUT=300000 \
-    MONGO_URI=mongodb://localhost:27017/paymentsvc \
+    MONGO_URI=mongodb://host.docker.internal:27017/paymentsvc \
     REDIS_HOST=host.docker.internal \
     REDIS_PORT=6379 \
     REDIS_PASSWORD= \
