@@ -8,7 +8,8 @@ import { readFileSync, writeFileSync } from 'fs';
 import { freemem } from 'os';
 import { config } from './Config/config';
 import logger from './Config/Logger';
-import { connection } from './Database/PostgresConnection';
+import { connectMongo } from './Database/MongoConnection';
+import mongoose from './Database/MongoConnection';
 import errorHandler from "./Middlewares/ErrorHandler";
 import { IndexRoute } from './Routers';
 import { IRoutes } from './Common/interfaces/IRoutes';
@@ -46,10 +47,10 @@ export default class App {
 
     public async connect(): Promise<void> {
         try {
-            await connection();
-            logger.info('Database connected successfully');
+            await connectMongo();
+            logger.info('MongoDB connected successfully');
         } catch (error) {
-            logger.error('Database connection failed:', error);
+            logger.error('MongoDB connection failed:', error);
             process.exit(1);
         }
     }
@@ -164,6 +165,8 @@ export default class App {
             });
             logger.info('Server stopped gracefully');
         }
+        await mongoose.disconnect();
+        logger.info('MongoDB disconnected gracefully');
     }
 
     private getRoute = (req: Request): string => {
