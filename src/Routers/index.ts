@@ -4,8 +4,7 @@ import { IRoutes } from '@/Common/interfaces/IRoutes';
 import  logger  from '../Config/Logger';
 import { Application, Router } from 'express';
 
-import UserRoutes from './User.routes';
-import RoleRoutes from './Role.routes';
+import UserRoutes from './User.routes'
 
 
 interface RouteLayer {
