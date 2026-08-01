@@ -19,12 +19,8 @@ export const config = {
 	isProduction: env === 'production',
 	isTest: env === 'test',
 	port: Number(parsedEnv.PORT) || 3000,
-	database: {
-		host: parsedEnv.DB_HOST || 'localhost',
-		port: parsedEnv.DB_PORT || 5432,
-		name: parsedEnv.DB_NAME || 'postgres',
-		username: parsedEnv.DB_USER || 'postgres',
-		password: parsedEnv.DB_PASSWORD || 'postpwd',
+	mongo: {
+		uri: parsedEnv.MONGO_URI || 'mongodb://localhost:27017/paymentsvc',
 	},
 	server: {
 		memoryUsageTimeOut: (parsedEnv.MEMORY_USAGE_TIMEOUT),
