@@ -99,18 +99,34 @@ Edit `package.json`:
 
 ## Known Impact / Acknowledged Breakage
 
-The following files import the deleted Sequelize models or the removed
-`sequelize` default export. They will fail to compile until ported to Mongoose
-in a later effort:
+Removing `src/Models/` and `src/Repository/` cascades through the import graph.
+The following files directly import deleted modules (Sequelize models,
+repositories, or the `sequelize` default export) and will fail to compile until
+ported to Mongoose in a later effort:
 
 - `src/Services/User.service.ts`
+- `src/Services/Role.service.ts`
 - `src/Services/SocialAuth.service.ts`
 - `src/Middlewares/Auth.middleware.ts`
 
+Because these are imported upstream, the breakage propagates to:
+
+- `src/Controllers/User.controller.ts`, `src/Controllers/Role.controller.ts`
+- `src/Config/Passport.ts`
+- `src/Routers/User.routes.ts`, `src/Routers/Role.routes.ts`,
+  `src/Routers/index.ts`
+- `src/app.ts` (imports `IndexRoute`)
+
+Net effect: the service will **not compile or run** until the auth layer is
+rebuilt on Mongoose. This is accepted per the "Remove Postgres fully" decision
+and is out of scope for this connection-layer change.
+
 ## Verification
 
-- `npm run build` (tsc): confirm the **only** remaining errors are in the three
-  known-orphaned files above — not in the new Mongo connection module or the
-  wiring.
-- Startup check: run the app locally and confirm the connection log line for
-  MongoDB appears without error.
+- `npm run build` (tsc): confirm the only errors are in the auth-layer files
+  listed above (direct + cascading) — none in the new Mongo connection module
+  or the wiring (`src/Database/MongoConnection.ts`, `src/Config/config.ts`,
+  `src/app.ts` connect/disconnect).
+- Startup check: with the broken auth-layer files temporarily stubbed out, run
+  the app locally and confirm the MongoDB connection log line appears without
+  error. (Full startup cannot succeed until the auth layer is ported.)
