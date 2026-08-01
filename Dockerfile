@@ -16,11 +16,7 @@ COPY . .
 ENV ENV=development \
     PORT=3000 \
     MEMORY_USAGE_TIMEOUT=300000 \
-    DB_HOST=localhost \
-    DB_PORT=5432 \
-    DB_NAME=postgres \
-    DB_USER=postgres \
-    DB_PASSWORD=postpwd \
+    MONGO_URI=mongodb://localhost:27017/paymentsvc \
     REDIS_HOST=host.docker.internal \
     REDIS_PORT=6379 \
     REDIS_PASSWORD= \
